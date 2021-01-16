@@ -4,6 +4,7 @@ import Routing from "./Routing";
 import NavBar from "./navigation/Navbar";
 import DialogSelector from "./authentication/DialogSelector";
 
+
 const styles = (theme: Theme) =>
   createStyles({
     wrapper: {
@@ -12,10 +13,19 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface MainProps extends WithStyles<typeof styles> {}
+
+interface MainProps extends WithStyles<typeof styles> {
+  register: (form: {
+    username: string;
+    email: string;
+    password: string;
+  }) => void;
+
+  login: (form: { username: string; password: string }) => void;
+}
 
 function Main(props: MainProps) {
-  const { classes } = props;
+  const { classes, register, login } = props;
 
   const [selectedTab, setSelectedTab] = useState("");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -53,9 +63,11 @@ function Main(props: MainProps) {
       <Fragment>
         <DialogSelector
           openLoginDialog={openLoginDialog}
+          openRegisterDialog={openRegisterDialog}
           dialogOpen={dialogOpen}
           onClose={closeDialog}
-          openRegisterDialog={openRegisterDialog}
+          register={register}
+          login={login}
         />
         <NavBar
           selectedTab={selectedTab}

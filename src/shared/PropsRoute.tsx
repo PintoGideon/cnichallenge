@@ -13,7 +13,10 @@ const renderMergedProps = (
 
 interface PropsRouteProps {
   path: string;
-  selectHome: () => void;
+  user?: string;
+  selectHome?: () => void;
+  selectDashboard?: () => void;
+  pushMessageToSnackbar?: (message: string) => void;
   component:
     | React.ComponentType<RouteComponentProps<any>>
     | React.ComponentType<any>;

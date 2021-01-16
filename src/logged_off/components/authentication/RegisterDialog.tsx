@@ -19,6 +19,8 @@ import FormDialog from "../../../shared/FormDialog";
 import HighlightedInformation from "../../../shared/HighlightedInformation";
 import ButtonCircularProgress from "../../../shared/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../../shared/VisibilityPasswordTextField";
+import { RefProp } from "./LoginDialog";
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -42,26 +44,46 @@ interface RegisterDialogProps extends WithStyles<typeof styles> {
   setStatus: Dispatch<SetStateAction<string>>;
   status: string;
   onClose: () => void;
+  registerCallback: (form: {
+    username: string;
+    email: string;
+    password: string;
+  }) => void;
 }
 
 function RegisterDialog(props: RegisterDialogProps) {
-  const { setStatus, status, onClose } = props;
+  const { setStatus, status, onClose, registerCallback } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const registerPassword = useRef("");
-  const registerPasswordRepeat = useRef("");
+  const registerUsername = useRef<RefProp>({
+    value: "",
+  });
+  const registerPassword = useRef<RefProp>({
+    value: "",
+  });
+  const registerPasswordRepeat = useRef<RefProp>({
+    value: "",
+  });
+  const registerEmail = useRef<RefProp>({
+    value: "",
+  });
 
   const register = useCallback(() => {
-    if (registerPassword?.current !== registerPasswordRepeat?.current) {
+    const username  =  registerUsername.current.value;
+    const email = registerEmail.current.value;
+    const password = registerPassword.current.value;
+    const confirmPassword = registerPassword.current.value;
+    if (password !== confirmPassword) {
       setStatus("passwordsDontMatch");
       return;
     }
-    setStatus("");
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 1500);
-  }, [setStatus, setIsLoading, registerPassword, registerPasswordRepeat]);
+
+    if (username && email && password && password === confirmPassword) {
+      setStatus("");
+      setIsLoading(true);
+      registerCallback({ username, email, password });
+    }
+  }, [setStatus, setIsLoading, registerPassword, registerCallback]);
 
   return (
     <FormDialog
@@ -81,9 +103,28 @@ function RegisterDialog(props: RegisterDialogProps) {
             margin="normal"
             required
             fullWidth
+            error={status === "invalidUsername"}
+            label="UserName"
+            autoFocus
+            inputRef={registerUsername}
+            autoComplete="off"
+            type="text"
+            onChange={() => {
+              if (status === "invalidUsername") {
+                setStatus("");
+              }
+            }}
+            FormHelperTextProps={{ error: true }}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
             error={status === "invalidEmail"}
             label="Email Address"
             autoFocus
+            inputRef={registerEmail}
             autoComplete="off"
             type="email"
             onChange={() => {

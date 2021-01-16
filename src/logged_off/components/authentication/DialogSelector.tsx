@@ -8,10 +8,16 @@ interface DialogSelectorProps {
   openLoginDialog: () => void;
   onClose: () => void;
   openRegisterDialog: () => void;
+  register: (form: {
+    username: string;
+    email: string;
+    password: string;
+  }) => void;
+  login: (form: { username: string; password: string }) => void;
 }
 
 function DialogSelector(props: DialogSelectorProps) {
-  const { dialogOpen, onClose } = props;
+  const { dialogOpen, onClose, register, login } = props;
   const [loginStatus, setLoginStatus] = useState("");
   const [registerStatus, setRegisterStatus] = useState("");
 
@@ -29,6 +35,7 @@ function DialogSelector(props: DialogSelectorProps) {
             onClose={_onClose}
             status={registerStatus}
             setStatus={setRegisterStatus}
+            registerCallback={register}
           />
         );
       case "login":
@@ -37,6 +44,7 @@ function DialogSelector(props: DialogSelectorProps) {
             onClose={_onClose}
             status={loginStatus}
             setStatus={setLoginStatus}
+            loginCallback={login}
           />
         );
 

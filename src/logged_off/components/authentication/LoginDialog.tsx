@@ -45,36 +45,36 @@ interface LoginDialogProps
     RouteComponentProps {
   onClose: () => void;
   setStatus: Dispatch<SetStateAction<string>>;
-
   status: string;
+  loginCallback:(form:{username:string, password:string})=>void;
 }
 
+export type RefProp = {
+  value: string;
+};
+
 function LoginDialog(props: LoginDialogProps) {
-  const { setStatus, history, onClose, status } = props;
+  const { setStatus, onClose, status, loginCallback } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const loginEmail = useRef();
-  const loginPassword = useRef();
+  const loginUsername = useRef<RefProp>({
+    value: "",
+  });
+  const loginPassword = useRef<RefProp>({
+    value: "",
+  });
 
   const login = useCallback(() => {
     setIsLoading(true);
     setStatus("");
-    if (loginEmail?.current !== "test@web.com") {
-      setTimeout(() => {
-        setStatus("invalidEmail");
-        setIsLoading(false);
-      }, 1500);
-    } else if (loginPassword?.current !== "HaRzwc") {
-      setTimeout(() => {
-        setStatus("invalidPassword");
-        setIsLoading(false);
-      }, 1500);
-    } else {
-      setTimeout(() => {
-        history.push("/c/dashboard");
-      }, 150);
+    const username = loginUsername.current.value;
+    const password = loginPassword.current.value;
+
+    if(username && password){
+      setIsLoading(false);
+      loginCallback({username,password})    
     }
-  }, [setIsLoading, loginEmail, loginPassword, history, setStatus]);
+  }, [setIsLoading, loginUsername, loginPassword, setStatus, loginCallback]);
 
   return (
     <Fragment>
@@ -94,22 +94,22 @@ function LoginDialog(props: LoginDialogProps) {
               //@ts-ignore
               variant="outlined"
               margin="normal"
-              error={status === "invalidEmail"}
+              error={status === "invalidUsername"}
               required
               fullWidth
-              label="Email Address"
-              inputRef={loginEmail}
+              label="UserName"
+              inputRef={loginUsername}
               autoFocus
               autoComplete="off"
-              type="email"
+              type="text"
               onChange={() => {
-                if (status === "invalidEmail") {
+                if (status === "invalidUsername") {
                   setStatus("");
                 }
               }}
               helperText={
-                status === "invalidEmail" &&
-                "This email address isn't associated with an account."
+                status === "Username" &&
+                "This username address isn't associated with an account."
               }
               FormHelperTextProps={{ error: true }}
             />
