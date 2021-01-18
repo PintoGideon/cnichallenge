@@ -4,6 +4,7 @@ import axios from "axios";
 const localStorageKey = "AUTH_TOKEN";
 const USERURL = `${process.env.REACT_APP_API_URL}users/`;
 const AUTHURL = `${process.env.REACT_APP_API_URL}`;
+const CNIURL = `${process.env.REACT_APP_CNI_URL}`;
 
 export type Payload = {
   [key: string]: {
@@ -92,11 +93,7 @@ export async function register({
 
     data.user = payloadData.data;
     if (data.user.username) {
-      token = await Client.getAuthToken(
-        process.env.REACT_APP_API_AUTH_URL,
-        data.user.username,
-        password
-      );
+      token = await Client.getAuthToken(AUTHURL, data.user.username, password);
     }
   } catch (error) {
     if (error.response.data.username) {
@@ -120,25 +117,37 @@ export async function client() {
   let client;
 
   if (token) {
-    client = await new Client(process.env.REACT_APP_API_URL, {
+    client = await new Client(AUTHURL, {
       token,
     });
   }
   return client;
 }
 
-export async function cniclient(endpoint: string, data: any, method: string) {
-  const config = {
-    method: "POST",
-    body: JSON.stringify(data),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
 
+
+export async function cniclient(
+  endpoint: string,
+  method: string,
+  auth: {
+    username: string;
+    password: string;
+  }
+) {
+  console.log("CNIURL", CNIURL, process.env);
   if (method === "get") {
-    axios.get(`${AUTHURL}/${endpoint}`).then((response) => {
-      console.log(response.data);
-    });
+    return axios
+      .get(`${CNIURL}${endpoint}`, {
+        auth,
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      })
+      .then((response) => {
+        return response.data;
+      });
   }
 }
+
+

@@ -1,7 +1,6 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import {
   Toolbar,
-  Typography,
   Button,
   Paper,
   withStyles,
@@ -29,7 +28,6 @@ function PostContent(props: PostContentProps) {
   return (
     <Paper>
       <Toolbar className={classes.toolbar}>
-        <Typography variant="h6">Submit your work</Typography>
         <Button
           variant="contained"
           color="secondary"

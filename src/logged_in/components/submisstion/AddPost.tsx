@@ -43,7 +43,6 @@ function AddPost(props: AddPostProps) {
   };
 
   const readFile = (file: any) => {
-    console.log("File", file.name, file);
     return new Promise((resolve, reject) => {
       const invalidRepresentation = new Error("Invalid Plugin Representation");
       const reader = new FileReader();
@@ -95,14 +94,17 @@ function AddPost(props: AddPostProps) {
         });
         newPlugin = resp.data;
         pushMessageToSnackbar &&
-          pushMessageToSnackbar("Your Submission was received successfully");
+          pushMessageToSnackbar(
+            
+            `Your Submission for ${newPlugin.name} was received successfully`
+          
+          );
         onClose();
       } catch (error) {
         setErrorStatus(error.response.data);
       }
     }
   };
-  console.log("UploadFile", uploadFile);
 
   return (
     <Fragment>

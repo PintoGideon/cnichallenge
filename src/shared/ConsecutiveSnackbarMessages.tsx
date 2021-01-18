@@ -71,7 +71,6 @@ function ConsecutiveSnackbars(props: ConsecutiveSnackbarMessagesProps) {
   useEffect(() => {
     getPushMessageFromChild(pushMessage);
   }, [getPushMessageFromChild, pushMessage]);
-  console.log("MessageInfo", messageInfo);
 
   return (
     <Snackbar

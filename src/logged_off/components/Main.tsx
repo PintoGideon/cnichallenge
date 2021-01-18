@@ -3,6 +3,8 @@ import { createStyles, Theme, withStyles, WithStyles } from "@material-ui/core";
 import Routing from "./Routing";
 import NavBar from "./navigation/Navbar";
 import DialogSelector from "./authentication/DialogSelector";
+import Footer from "./footer/Footer";
+import smoothScrollTop from "../../shared/functions/smoothScrollTop";
 
 
 const styles = (theme: Theme) =>
@@ -58,6 +60,20 @@ function Main(props: MainProps) {
     setSelectedTab("Home");
   }, [setSelectedTab]);
 
+  const selectAbout = useCallback(() => {
+    smoothScrollTop();
+    document.title = "CNI-CHALLENGE";
+    setSelectedTab("Blog");
+  }, [setSelectedTab]);
+
+  const selectContainerize = useCallback(() => {
+    smoothScrollTop();
+    document.title = "CNI-CHALLENGE";
+    setSelectedTab("Containerize");
+  }, [setSelectedTab]);
+
+
+
   return (
     <div className={classes.wrapper}>
       <Fragment>
@@ -78,7 +94,12 @@ function Main(props: MainProps) {
           handleMobileDrawerOpen={handleMobileDrawerOpen}
           handleMobileDrawerClose={handleMobileDrawerClose}
         />
-        <Routing selectHome={selectHome} />
+        <Routing
+          selectHome={selectHome}
+          selectAbout={selectAbout}
+          selectContainerize={selectContainerize}
+        />
+        <Footer />
       </Fragment>
     </div>
   );

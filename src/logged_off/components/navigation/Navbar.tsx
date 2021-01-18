@@ -16,6 +16,7 @@ import MenuIcon from "@material-ui/icons/Menu";
 import HomeIcon from "@material-ui/icons/Home";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
+import InfoIcon from "@material-ui/icons/Info";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -64,6 +65,11 @@ function NavBar(props: NavBarProps) {
       link: "/",
       name: "Home",
       icon: <HomeIcon className="text-white" />,
+    },
+    {
+      link: "/about",
+      name: "About",
+      icon: <InfoIcon />,
     },
     {
       name: "Register",

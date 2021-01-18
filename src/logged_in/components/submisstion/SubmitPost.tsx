@@ -90,8 +90,6 @@ function SubmitPost(props: SubmitPostProps) {
     fileName,
   } = props;
 
-  console.log("FileName", fileName);
-
   return (
     <Fragment>
       <Typography paragraph variant="h6">

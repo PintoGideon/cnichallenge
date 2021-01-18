@@ -1,13 +1,10 @@
 import React from "react";
-import PropTypes from "prop-types";
 import classNames from "classnames";
 import {
   Paper,
   Toolbar,
   ListItemText,
-  ListItemSecondaryAction,
   ListItemIcon,
-  Switch,
   Box,
   withStyles,
   WithStyles,
@@ -32,17 +29,19 @@ const styles = (theme: Theme) => ({
   listItemSecondaryAction: { paddingRight: theme.spacing(1) },
 });
 
-interface StatusAreaProps extends WithStyles<typeof styles> {}
+interface StatusAreaProps extends WithStyles<typeof styles> {
+  isPluginSubmitted: boolean;
+}
 
 function StatusArea(props: StatusAreaProps) {
-  const { classes, isPluginSubmmitted } = props;
+  const { classes, isPluginSubmitted } = props;
   return (
     <Paper className={classes.paper}>
       <Toolbar className={classes.toolbar}>
         <Box display="flex" alignItems="center">
           <Box mr={2}>
             <ListItemText
-              primary="Status"
+              primary="Submission Status"
               secondary={isPluginSubmitted ? "Activated" : "Not activated"}
               className="mr-2"
             />
@@ -50,7 +49,7 @@ function StatusArea(props: StatusAreaProps) {
           <ListItemIcon>
             <LoopIcon
               className={classNames(
-                isPluginSubmmitted ? classes.spin : null,
+                isPluginSubmitted ? classes.spin : null,
                 classes.scaleMinus
               )}
             />
@@ -61,11 +60,6 @@ function StatusArea(props: StatusAreaProps) {
   );
 }
 
-StatusArea.propTypes = {
-  classes: PropTypes.object.isRequired,
-  theme: PropTypes.object.isRequired,
-  toggleAccountActivation: PropTypes.func.isRequired,
-  isAccountActivated: PropTypes.bool.isRequired,
-};
 
-export default withStyles(styles, { withTheme: true })(AccountInformationArea);
+
+export default withStyles(styles, { withTheme: true })(StatusArea);

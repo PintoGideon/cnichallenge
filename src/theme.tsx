@@ -21,7 +21,7 @@ const sm = 600;
 const xs = 0;
 
 // spacing
-const spacing = 8;
+const spacing = 2;
 
 const theme = createMuiTheme({
   palette: {

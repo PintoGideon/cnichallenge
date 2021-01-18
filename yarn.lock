@@ -1169,6 +1169,13 @@
     minimatch "^3.0.4"
     strip-json-comments "^3.1.1"
 
+"@fnndsc/chrisapi@^1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@fnndsc/chrisapi/-/chrisapi-1.4.0.tgz#ae16bdd82f94d2b9722df67f912982b164455604"
+  integrity sha512-uNcDMBRqvj7CoJT/IHj4eCjesXLsabFtdOHrDnqS81+0pGygk25Nf7t1MXt1ZzDC9VgRShnVmePR+6dOI4v6qQ==
+  dependencies:
+    axios "^0.18.0"
+
 "@fnndsc/chrisstoreapi@^2.0.2":
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/@fnndsc/chrisstoreapi/-/chrisstoreapi-2.0.2.tgz#8d6c2d67da70a9b6b230a9bb88d6be1b69af9b8b"
