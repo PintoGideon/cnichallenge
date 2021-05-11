@@ -17,6 +17,8 @@ import HomeIcon from "@material-ui/icons/Home";
 import HowToRegIcon from "@material-ui/icons/HowToReg";
 import LockOpenIcon from "@material-ui/icons/LockOpen";
 import InfoIcon from "@material-ui/icons/Info";
+import NavigationDrawer from "../../../shared/NavigationDrawer";
+
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -44,7 +46,7 @@ const styles = (theme: Theme) =>
 interface NavBarProps extends WithStyles<typeof styles> {
   handleMobileDrawerOpen: () => void;
   handleMobileDrawerClose: () => void;
-  mobileDrawerOpen: Boolean;
+  mobileDrawerOpen: boolean;
   selectedTab: string;
   selectTab: Dispatch<SetStateAction<string>>;
   openRegisterDialog: () => void;
@@ -58,6 +60,8 @@ function NavBar(props: NavBarProps) {
     openLoginDialog,
     handleMobileDrawerOpen,
     handleMobileDrawerClose,
+    mobileDrawerOpen,
+    selectedTab,
   } = props;
 
   const menuItems = [
@@ -73,13 +77,13 @@ function NavBar(props: NavBarProps) {
     },
     {
       name: "Register",
-      onClick: openRegisterDialog,
       icon: <HowToRegIcon className="text-white" />,
+      onClick: openRegisterDialog,
     },
     {
       name: "Login",
-      onClick: openLoginDialog,
       icon: <LockOpenIcon className="text-white" />,
+      onClick: openLoginDialog,
     },
   ];
 
@@ -150,6 +154,13 @@ function NavBar(props: NavBarProps) {
           </div>
         </Toolbar>
       </AppBar>
+      <NavigationDrawer
+        menuItems={menuItems}
+        anchor="right"
+        open={mobileDrawerOpen}
+        selectedItem={selectedTab}
+        onClose={handleMobileDrawerClose}
+      />
     </div>
   );
 }

@@ -2,6 +2,7 @@ import React, { Fragment, useCallback, useState } from "react";
 import RegisterDialog from "./RegisterDialog";
 import LoginDialog from "./LoginDialog";
 import ModalBackdrop from "../../../shared/ModalBackdrop";
+import { RegisterErrorPayload } from "../../../App";
 
 interface DialogSelectorProps {
   dialogOpen: string;
@@ -13,11 +14,14 @@ interface DialogSelectorProps {
     email: string;
     password: string;
   }) => void;
+  authError: string;
+  registerError:RegisterErrorPayload,
   login: (form: { username: string; password: string }) => void;
+  
 }
 
 function DialogSelector(props: DialogSelectorProps) {
-  const { dialogOpen, onClose, register, login } = props;
+  const { dialogOpen, onClose, register, login, authError , registerError} = props;
   const [loginStatus, setLoginStatus] = useState("");
   const [registerStatus, setRegisterStatus] = useState("");
 
@@ -36,6 +40,7 @@ function DialogSelector(props: DialogSelectorProps) {
             status={registerStatus}
             setStatus={setRegisterStatus}
             registerCallback={register}
+            registerError={registerError}
           />
         );
       case "login":
@@ -45,6 +50,7 @@ function DialogSelector(props: DialogSelectorProps) {
             status={loginStatus}
             setStatus={setLoginStatus}
             loginCallback={login}
+            authError={authError}
           />
         );
 
@@ -57,6 +63,9 @@ function DialogSelector(props: DialogSelectorProps) {
     registerStatus,
     setLoginStatus,
     setRegisterStatus,
+    login,
+    register,
+    authError,
   ]);
 
   return (

@@ -2,16 +2,16 @@ import Client from "@fnndsc/chrisstoreapi";
 import axios from "axios";
 
 const localStorageKey = "AUTH_TOKEN";
-const USERURL = `${process.env.REACT_APP_API_URL}users/`;
-const AUTHURL = `${process.env.REACT_APP_API_URL}`;
 const CNIURL = `${process.env.REACT_APP_CNI_URL}`;
+const APIURL = `${process.env.REACT_APP_API_URL}`;
+const AUTHURL = `${process.env.REACT_APP_API_AUTH_URL}`;
+const USERURL = `${process.env.REACT_APP_API_USER_URL}`;
 
 export type Payload = {
   [key: string]: {
-    id?: number;
     username: string;
+    email: string;
     password: string;
-    email?: string;
   };
 };
 
@@ -26,36 +26,26 @@ export async function login({
   username: string;
   password: string;
 }) {
-  let data: Payload = {
-    user: {
-      username: "",
-      email: "",
-      password: "",
-      id: 0,
+  
+  let data = {
+    auth: {
+      username,
+      password,
     },
-    error: {
-      username: "",
-      password: "",
-      email: "",
-    },
+    error: "",
   };
   let token = "";
   try {
-    token = await Client.getAuthToken(
-      process.env.REACT_APP_API_AUTH_URL,
-      username,
-      password
-    );
-    data.user.username = username;
+    token = await Client.getAuthToken(AUTHURL, username, password);
   } catch (error) {
-    if (error.response.data.username) {
-      data.error.username = error.response.data.username[0];
-    }
-    if (error.response.data.password) {
-      data.error.password = error.response.data.password[0];
-    }
+    data.error = "Invalid username or password";
   }
-  window.localStorage.setItem(localStorageKey, token);
+  if (token){
+     data.auth.username = username;
+     data.auth.password = password;
+     window.localStorage.setItem(localStorageKey, token);
+  }
+ 
   return data;
 }
 
@@ -73,12 +63,11 @@ export async function register({
       username: "",
       email: "",
       password: "",
-      id: 0,
     },
     error: {
       username: "",
-      password: "",
       email: "",
+      password: "",
     },
   };
   let token = "";
@@ -91,10 +80,10 @@ export async function register({
       email
     );
 
-    data.user = payloadData.data;
-    if (data.user.username) {
-      token = await Client.getAuthToken(AUTHURL, data.user.username, password);
-    }
+    data.user.username = payloadData.data.username;
+    data.user.email = payloadData.data.email;
+    data.user.password = password;
+    token = await Client.getAuthToken(AUTHURL, username, password);
   } catch (error) {
     if (error.response.data.username) {
       data.error.username = error.response.data.username[0];
@@ -112,18 +101,26 @@ export async function register({
   return data;
 }
 
-export async function client() {
-  const token = window.localStorage.getItem(localStorageKey);
-  let client;
+export async function logout() {
+  window.localStorage.removeItem(localStorageKey);
+}
 
+export async function client({
+  username,
+  password,
+}: {
+  username: string;
+  password: string;
+}) {
+  let client;
+  let token = await Client.getAuthToken(AUTHURL, username, password);
   if (token) {
-    client = await new Client(AUTHURL, {
+    client = await new Client(APIURL, {
       token,
     });
   }
   return client;
 }
-
 
 
 export async function cniclient(
@@ -134,7 +131,6 @@ export async function cniclient(
     password: string;
   }
 ) {
-  console.log("CNIURL", CNIURL, process.env);
   if (method === "get") {
     return axios
       .get(`${CNIURL}${endpoint}`, {

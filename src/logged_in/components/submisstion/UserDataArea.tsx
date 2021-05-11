@@ -1,5 +1,4 @@
-import React, { useState, useCallback } from "react";
-
+import React, { useState, useCallback} from "react";
 import {
   Table,
   TableBody,
@@ -8,8 +7,7 @@ import {
   TableRow,
   IconButton,
   Box,
-  Accordion,
-  AccordionSummary,
+  Avatar,
   Typography,
   withStyles,
   Theme,
@@ -17,25 +15,25 @@ import {
   createStyles,
 } from "@material-ui/core";
 import { PluginListProp } from "../Main";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import DownloadIcon from "@material-ui/icons/ArrowDownward";
 import EnhancedTableHead from "../../../shared/EnhancedTableHead";
-
 import HighlightedInformation from "../../../shared/HighlightedInformation";
+
 
 const styles = (theme: Theme) =>
   createStyles({
     tableWrapper: {
       overflowX: "auto",
+      marginTop:'2rem'
     },
     alignRight: {
       display: "flex",
       flexDirection: "row-reverse",
       alignItems: "center",
-      paddingLeft: theme.spacing(2),
+      paddingLeft: theme.spacing(1),
     },
-    blackIcon: {
-      color: theme.palette.common.black,
+    primaryIcon: {
+      color: theme.palette.primary.main,
     },
     avatar: {
       width: 28,
@@ -57,25 +55,37 @@ const styles = (theme: Theme) =>
 
 const rows = [
   {
+    id: "icon",
+    numeric: true,
+    label: "",
+  },
+  { id: "author", numeric: false, label: "Author" },
+  {
     id: "name",
     numeric: false,
-    label: "Name",
+    label: "Plugin Name",
   },
   { id: "status", numeric: false, label: "Status" },
+  { id: "files", numeric: false, label: "Files Generated" },
+  {
+    id: "actions",
+    numeric: false,
+    label: "",
+  },
 ];
 
 const rowsPerPage = 25;
 interface CustomTableProps extends WithStyles<typeof styles> {
   pushMessageToSnackbar: (message: string) => void;
-  computedList: PluginListProp[];
+  pluginList:PluginListProp[]
 }
 
 function CustomTable(props: CustomTableProps) {
-  const { classes, computedList } = props;
-  console.log("ComputedList", computedList);
+  const { classes, pluginList } = props;
   const [order, setOrder] = useState<"asc" | "desc">("asc");
   const [orderBy, setOrderBy] = useState<"asc" | "desc">("asc");
   const [page, setPage] = useState(0);
+   
 
   const handleRequestSort = useCallback(
     (__, property) => {
@@ -98,28 +108,37 @@ function CustomTable(props: CustomTableProps) {
   );
 
   return (
-    <Accordion>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-        <Typography>Your Submissions</Typography>
-      </AccordionSummary>
-
       <Box width="100%">
+        <Typography>My Submissions</Typography>
         <div className={classes.tableWrapper}>
-          {computedList.length > 0 ? (
+          {pluginList.length > 0 ? (
             <Table aria-labelledby="tableTitle">
               <EnhancedTableHead
                 order={order}
                 orderBy={orderBy}
                 onRequestSort={handleRequestSort}
-                rowCount={computedList.length}
+                rowCount={pluginList.length}
                 rows={rows}
               />
               <TableBody>
-                {computedList.length > 0 &&
-                  computedList
+                {pluginList.length > 0 &&
+                  pluginList
                     .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                     .map((row: PluginListProp, index: number) => (
                       <TableRow hover tabIndex={-1} key={index}>
+                        <TableCell
+                          component="th"
+                          scope="row"
+                          className={classes.firstData}
+                        >
+                          <Avatar
+                            className={classes.avatar}
+                            src={row.profilePicUrl}
+                          />
+                        </TableCell>
+                        <TableCell component="th" scope="row">
+                          {row.author}
+                        </TableCell>
                         <TableCell component="th" scope="row">
                           {row.name}
                         </TableCell>
@@ -127,13 +146,17 @@ function CustomTable(props: CustomTableProps) {
                           {row.status}
                         </TableCell>
                         <TableCell component="th" scope="row">
+                          {row.files && row.files.length > 0 ? "Yes" : "No"}
+                        </TableCell>
+                        <TableCell component="th" scope="row">
                           <Box display="flex" justifyContent="flex-end">
                             <IconButton
+                              color="primary"
                               className={classes.iconButton}
                               onClick={() => {}}
                               aria-label="Download"
                             >
-                              <DownloadIcon className={classes.blackIcon} />
+                              <DownloadIcon />
                             </IconButton>
                           </Box>
                         </TableCell>
@@ -144,7 +167,7 @@ function CustomTable(props: CustomTableProps) {
           ) : (
             <Box m={2}>
               <HighlightedInformation>
-                No friends added yet.
+                Results are not available or No submissions have been made yet.
               </HighlightedInformation>
             </Box>
           )}
@@ -152,7 +175,7 @@ function CustomTable(props: CustomTableProps) {
         <div className={classes.alignRight}>
           <TablePagination
             component="div"
-            count={computedList.length}
+            count={pluginList.length}
             rowsPerPage={rowsPerPage}
             page={page}
             backIconButtonProps={{
@@ -165,14 +188,14 @@ function CustomTable(props: CustomTableProps) {
             classes={{
               select: classes.dNone,
               selectIcon: classes.dNone,
-              actions: computedList.length > 0 ? classes.dBlock : classes.dNone,
-              caption: computedList.length > 0 ? classes.dBlock : classes.dNone,
+              actions: pluginList.length > 0 ? classes.dBlock : classes.dNone,
+              caption: pluginList.length > 0 ? classes.dBlock : classes.dNone,
             }}
             labelRowsPerPage=""
           />
         </div>
       </Box>
-    </Accordion>
+  
   );
 }
 

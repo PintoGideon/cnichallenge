@@ -1,6 +1,7 @@
 import React from "react";
 import { Route, RouteComponentProps } from "react-router-dom";
 import { PluginListProp } from "../logged_in/components/Main";
+import { Auth } from "../App";
 
 const renderMergedProps = (
   component:
@@ -14,10 +15,10 @@ const renderMergedProps = (
 
 interface PropsRouteProps {
   exact?: boolean;
+  user?: Auth;
   selectAbout?: () => void;
   selectContainerize?: () => void;
   path: string;
-  user?: string;
   selectHome?: () => void;
   selectDashboard?: () => void;
   isPluginSubmitted?: boolean;

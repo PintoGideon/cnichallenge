@@ -15,6 +15,7 @@ const styles = (theme: Theme) =>
     dNone: { display: "none" },
     toolbar: {
       justifyContent: "space-between",
+      marginBottom: "3rem",
     },
   });
 

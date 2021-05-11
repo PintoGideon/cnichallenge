@@ -16,6 +16,7 @@ const styles = (theme: Theme) =>
       border: `${theme.border.borderWidth}px solid ${theme.palette.warning.main}`,
       padding: theme.spacing(2),
       borderRadius: theme.shape.borderRadius,
+      marginTop: "1rem",
     },
   });
 

@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import classNames from "classnames";
 import {
   Grid,
-  Typography,
   Card,
   Box,
   withStyles,
@@ -11,6 +10,7 @@ import {
   WithStyles,
 } from "@material-ui/core";
 import ZoomImage from "../../../shared/ZoomImage";
+import content from './content'
 import smoothScrollTop from "../../../shared/functions/smoothScrollTop";
 
 const styles = (theme: Theme) =>
@@ -35,6 +35,13 @@ const styles = (theme: Theme) =>
     card: {
       boxShadow: theme.shadows[4],
     },
+
+    h5:{
+      color: theme.palette.primary.main,
+      marginTop:'2rem',
+      marginBottom:"2rem"
+
+    }
   });
 
 interface AboutPostProps extends WithStyles<typeof styles> {}
@@ -56,54 +63,13 @@ function AboutPost(props: AboutPostProps) {
         <Grid container spacing={5}>
           <Grid item md={9}>
             <Card className={classes.card}>
-              <Box pt={3} pr={3} pl={3} pb={2}>
-                <Typography variant="h4">
-                  <b>About the Challenge</b>
-                </Typography>
-              </Box>
               <ZoomImage
                 className={classes.img}
                 src={`${process.env.PUBLIC_URL}/images/Challenge.png`}
                 alt=""
               />
               <Box p={3}>
-                <Typography variant="body2">
-                  The{" "}
-                  <a href="http://www.brainconnectivity.net">
-                    Connectomics in NeuroImaging Challenge
-                  </a>{" "}
-                  was held at the Medical Image Computation and Computer
-                  Assisted Intervention (MICCAI) Conference in 2019. Full
-                  details of this Challenge can be found at in the corresponding
-                  publication{" "}
-                  <a href="https://arxiv.org/abs/2006.03611">
-                    <b>here</b>
-                  </a>
-                </Typography>
-                <Typography variant="body2">
-                  With our free to download training data and the use of our
-                  Docker framework, you will be able to assess your
-                  classification model on our hidden test dataset.
-                </Typography>
-
-                <Typography variant="h5">Problem Statement</Typography>
-                <Typography variant="body2">
-                  <i>
-                    Using functional connectomics, are we capturing biologically
-                    relevant and generalizable information about the brain, or
-                    are we simply overfitting to the data?
-                  </i>{" "}
-                  This Challenge addresses the issues of generalizability and
-                  clinical relevance for functional connectomes. We provide
-                  resting-state fMRI (rsfMRI) datasets of children with
-                  attention deficit hyperactivity disorder (ADHD) and
-                  neurotypical controls for you to{" "}
-                  <b>
-                    design a classNameification framework that can predict
-                    subject diagnosis based on brain connectivity data
-                  </b>
-                  .
-                </Typography>
+               {content}
               </Box>
             </Card>
           </Grid>

@@ -134,7 +134,7 @@ function HeadSection(props: HeadSectionProps) {
                             variant={isWidthUp("lg", width) ? "h6" : "body1"}
                             color="textSecondary"
                           >
-                            Please sign up below to continue
+                            Please sign up below to make a submission
                           </Typography>
                         </Box>
                         <Button
@@ -145,7 +145,7 @@ function HeadSection(props: HeadSectionProps) {
                           classes={{ label: classes.extraLargeButtonLabel }}
                           href="https://github.com/dunky11/react-saas-template"
                         >
-                          Sign Up
+                          Learn More
                         </Button>
                       </div>
                     </Box>

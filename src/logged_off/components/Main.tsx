@@ -5,6 +5,7 @@ import NavBar from "./navigation/Navbar";
 import DialogSelector from "./authentication/DialogSelector";
 import Footer from "./footer/Footer";
 import smoothScrollTop from "../../shared/functions/smoothScrollTop";
+import { RegisterErrorPayload } from "../../App";
 
 
 const styles = (theme: Theme) =>
@@ -22,12 +23,14 @@ interface MainProps extends WithStyles<typeof styles> {
     email: string;
     password: string;
   }) => void;
-
+  authError: string;
+  registerError:RegisterErrorPayload
   login: (form: { username: string; password: string }) => void;
+
 }
 
 function Main(props: MainProps) {
-  const { classes, register, login } = props;
+  const { classes, register, login, authError, registerError } = props;
 
   const [selectedTab, setSelectedTab] = useState("");
   const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
@@ -84,6 +87,8 @@ function Main(props: MainProps) {
           onClose={closeDialog}
           register={register}
           login={login}
+          authError={authError}
+          registerError={registerError}
         />
         <NavBar
           selectedTab={selectedTab}

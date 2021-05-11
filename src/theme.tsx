@@ -125,6 +125,14 @@ const theme = createMuiTheme({
   typography: {
     //@ts-ignore
     useNextVariants: true,
+    fontSize: 16,
+    fontFamily: "Roboto",
+    h5: {
+      color: primary,
+      marginTop: "1rem",
+      marginBottom: "0.5rem",
+      borderBottom: `1px solid ${primary}`,
+    },
   },
 });
 

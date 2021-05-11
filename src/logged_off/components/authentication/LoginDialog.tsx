@@ -9,11 +9,13 @@ import React, {
 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import {
+  FormHelperText,
   TextField,
   Button,
   withStyles,
   WithStyles,
   Theme,
+  WithTheme,
 } from "@material-ui/core";
 import FormDialog from "../../../shared/FormDialog";
 import ButtonCircularProgress from "../../../shared/ButtonCircularProgress";
@@ -42,11 +44,13 @@ const styles = (theme: Theme) => ({
 
 interface LoginDialogProps
   extends WithStyles<typeof styles>,
+    WithTheme,
     RouteComponentProps {
   onClose: () => void;
   setStatus: Dispatch<SetStateAction<string>>;
   status: string;
-  loginCallback:(form:{username:string, password:string})=>void;
+  loginCallback: (form: { username: string; password: string }) => void;
+  authError: string;
 }
 
 export type RefProp = {
@@ -54,7 +58,15 @@ export type RefProp = {
 };
 
 function LoginDialog(props: LoginDialogProps) {
-  const { setStatus, onClose, status, loginCallback } = props;
+  const {
+    setStatus,
+    onClose,
+    status,
+    loginCallback,
+    history,
+    authError,
+    theme,
+  } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const loginUsername = useRef<RefProp>({
@@ -69,12 +81,22 @@ function LoginDialog(props: LoginDialogProps) {
     setStatus("");
     const username = loginUsername.current.value;
     const password = loginPassword.current.value;
-
-    if(username && password){
+    if (username && password) {
       setIsLoading(false);
-      loginCallback({username,password})    
+      loginCallback({ username, password });
+      if   (!authError) {
+        history.push("/dashboard");
+      }
     }
-  }, [setIsLoading, loginUsername, loginPassword, setStatus, loginCallback]);
+  }, [
+    setIsLoading,
+    loginUsername,
+    loginPassword,
+    setStatus,
+    loginCallback,
+    history,
+    authError,
+  ]);
 
   return (
     <Fragment>
@@ -102,16 +124,6 @@ function LoginDialog(props: LoginDialogProps) {
               autoFocus
               autoComplete="off"
               type="text"
-              onChange={() => {
-                if (status === "invalidUsername") {
-                  setStatus("");
-                }
-              }}
-              helperText={
-                status === "Username" &&
-                "This username address isn't associated with an account."
-              }
-              FormHelperTextProps={{ error: true }}
             />
             <VisibilityPasswordTextField
               //@ts-ignore
@@ -123,25 +135,21 @@ function LoginDialog(props: LoginDialogProps) {
               label="Password"
               inputRef={loginPassword}
               autoComplete="off"
-              onChange={() => {
-                if (status === "invalidPassword") {
-                  setStatus("");
-                }
-              }}
-              helperText={
-                status === "invalidPassword" ? (
-                  <span>
-                    Incorrect password. Try again, or click on{" "}
-                    <b>&quot;Forgot Password?&quot;</b> to reset it.
-                  </span>
-                ) : (
-                  ""
-                )
-              }
               FormHelperTextProps={{ error: true }}
               onVisibilityChange={setIsPasswordVisible}
               isVisible={isPasswordVisible}
             />
+            {authError && (
+              <FormHelperText
+                error
+                style={{
+                  display: "block",
+                  marginTop: theme.spacing(-1),
+                }}
+              >
+                {authError}
+              </FormHelperText>
+            )}
           </Fragment>
         }
         actions={
@@ -164,4 +172,8 @@ function LoginDialog(props: LoginDialogProps) {
   );
 }
 
-export default withRouter(withStyles(styles)(LoginDialog));
+export default withRouter(
+  withStyles(styles, {
+    withTheme: true,
+  })(LoginDialog)
+);

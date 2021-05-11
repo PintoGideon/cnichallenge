@@ -37,10 +37,10 @@ const styles = (theme: Theme) =>
   });
 
 type MenuItems = {
-  link: string;
-  name: string;
-  icon: any;
-  onClick: (e: any) => void;
+  link?: string;
+  name?: string;
+  icon?: any;
+  onClick?: (e: any) => void;
 };
 
 interface NavigationDrawerProps extends WithStyles<typeof styles>, WithWidth {
@@ -48,7 +48,7 @@ interface NavigationDrawerProps extends WithStyles<typeof styles>, WithWidth {
   open: boolean;
   onClose: () => void;
   selectedItem: string;
-  menuItems: MenuItems[];
+  menuItems?: MenuItems[];
 }
 
 function NavigationDrawer(props: NavigationDrawerProps) {
@@ -93,50 +93,51 @@ function NavigationDrawer(props: NavigationDrawerProps) {
         </ListItem>
       </Toolbar>
       <List className={classes.blackList}>
-        {menuItems.map((element) => {
-          if (element.link) {
-            return (
-              <Link
-                key={element.name}
-                to={element.link}
-                className={classes.noDecoration}
-                onClick={onClose}
-              >
-                <ListItem
-                  button
-                  selected={selectedItem === element.name}
-                  /**
-                   * We disable ripple as it will make a weird animation
-                   * with primary and secondary color
-                   */
-                  disableRipple
-                  disableTouchRipple
+        {menuItems &&
+          menuItems.map((element) => {
+            if (element.link) {
+              return (
+                <Link
+                  key={element.name}
+                  to={element.link}
+                  className={classes.noDecoration}
+                  onClick={onClose}
                 >
-                  <ListItemIcon>{element.icon}</ListItemIcon>
-                  <ListItemText
-                    primary={
-                      <Typography variant="subtitle1" className="text-white">
-                        {element.name}
-                      </Typography>
-                    }
-                  />
-                </ListItem>
-              </Link>
+                  <ListItem
+                    button
+                    selected={selectedItem === element.name}
+                    /**
+                     * We disable ripple as it will make a weird animation
+                     * with primary and secondary color
+                     */
+                    disableRipple
+                    disableTouchRipple
+                  >
+                    <ListItemIcon>{element.icon}</ListItemIcon>
+                    <ListItemText
+                      primary={
+                        <Typography variant="subtitle1" className="text-white">
+                          {element.name}
+                        </Typography>
+                      }
+                    />
+                  </ListItem>
+                </Link>
+              );
+            }
+            return (
+              <ListItem button key={element.name} onClick={element.onClick}>
+                <ListItemIcon>{element.icon}</ListItemIcon>
+                <ListItemText
+                  primary={
+                    <Typography variant="subtitle1" className="text-white">
+                      {element.name}
+                    </Typography>
+                  }
+                />
+              </ListItem>
             );
-          }
-          return (
-            <ListItem button key={element.name} onClick={element.onClick}>
-              <ListItemIcon>{element.icon}</ListItemIcon>
-              <ListItemText
-                primary={
-                  <Typography variant="subtitle1" className="text-white">
-                    {element.name}
-                  </Typography>
-                }
-              />
-            </ListItem>
-          );
-        })}
+          })}
       </List>
     </Drawer>
   );

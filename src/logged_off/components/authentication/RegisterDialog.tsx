@@ -6,6 +6,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
+import {withRouter, RouteComponentProps} from 'react-router-dom';
 
 import {
   TextField,
@@ -16,11 +17,11 @@ import {
   createStyles,
 } from "@material-ui/core";
 import FormDialog from "../../../shared/FormDialog";
-import HighlightedInformation from "../../../shared/HighlightedInformation";
+
 import ButtonCircularProgress from "../../../shared/ButtonCircularProgress";
 import VisibilityPasswordTextField from "../../../shared/VisibilityPasswordTextField";
 import { RefProp } from "./LoginDialog";
-
+import { RegisterErrorPayload } from "../../../App";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -40,7 +41,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface RegisterDialogProps extends WithStyles<typeof styles> {
+interface RegisterDialogProps extends WithStyles<typeof styles>, RouteComponentProps {
   setStatus: Dispatch<SetStateAction<string>>;
   status: string;
   onClose: () => void;
@@ -49,10 +50,11 @@ interface RegisterDialogProps extends WithStyles<typeof styles> {
     email: string;
     password: string;
   }) => void;
+  registerError: RegisterErrorPayload;
 }
 
 function RegisterDialog(props: RegisterDialogProps) {
-  const { setStatus, status, onClose, registerCallback } = props;
+  const { setStatus, status, onClose, registerCallback, registerError, history } = props;
   const [isLoading, setIsLoading] = useState(false);
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const registerUsername = useRef<RefProp>({
@@ -82,8 +84,9 @@ function RegisterDialog(props: RegisterDialogProps) {
       setStatus("");
       setIsLoading(true);
       registerCallback({ username, email, password });
+      history.push("/dashboard");
     }
-  }, [setStatus, setIsLoading, registerPassword, registerCallback]);
+  }, [setStatus, setIsLoading, registerPassword, registerCallback, history]);
 
   return (
     <FormDialog
@@ -103,17 +106,13 @@ function RegisterDialog(props: RegisterDialogProps) {
             margin="normal"
             required
             fullWidth
-            error={status === "invalidUsername"}
-            label="UserName"
+            error={registerError.username.length > 0}
+            label="User Name"
             autoFocus
             inputRef={registerUsername}
             autoComplete="off"
             type="text"
-            onChange={() => {
-              if (status === "invalidUsername") {
-                setStatus("");
-              }
-            }}
+            helperText={registerError.username}
             FormHelperTextProps={{ error: true }}
           />
           <TextField
@@ -121,39 +120,26 @@ function RegisterDialog(props: RegisterDialogProps) {
             margin="normal"
             required
             fullWidth
-            error={status === "invalidEmail"}
+            error={registerError.email.length > 0}
             label="Email Address"
-            autoFocus
             inputRef={registerEmail}
             autoComplete="off"
             type="email"
-            onChange={() => {
-              if (status === "invalidEmail") {
-                setStatus("");
-              }
-            }}
+            
             FormHelperTextProps={{ error: true }}
           />
+
           <VisibilityPasswordTextField
             //@ts-ignore
             variant="outlined"
             margin="normal"
             required
             fullWidth
-            error={
-              status === "passwordTooShort" || status === "passwordsDontMatch"
-            }
+            error={registerError.password.length > 0}
             label="Password"
             inputRef={registerPassword}
             autoComplete="off"
-            onChange={() => {
-              if (
-                status === "passwordTooShort" ||
-                status === "passwordsDontMatch"
-              ) {
-                setStatus("");
-              }
-            }}
+            
             helperText={(() => {
               if (status === "passwordTooShort") {
                 return "Create a password at least 6 characters long.";
@@ -161,7 +147,9 @@ function RegisterDialog(props: RegisterDialogProps) {
               if (status === "passwordsDontMatch") {
                 return "Your passwords dont match.";
               }
-              return null;
+              if(registerError.password.length>0){
+                return registerError.password
+              }
             })()}
             FormHelperTextProps={{ error: true }}
             isVisible={isPasswordVisible}
@@ -179,14 +167,6 @@ function RegisterDialog(props: RegisterDialogProps) {
             label="Repeat Password"
             inputRef={registerPasswordRepeat}
             autoComplete="off"
-            onChange={() => {
-              if (
-                status === "passwordTooShort" ||
-                status === "passwordsDontMatch"
-              ) {
-                setStatus("");
-              }
-            }}
             helperText={(() => {
               if (status === "passwordTooShort") {
                 return "Create a password at least 6 characters long.";
@@ -199,16 +179,6 @@ function RegisterDialog(props: RegisterDialogProps) {
             isVisible={isPasswordVisible}
             onVisibilityChange={setIsPasswordVisible}
           />
-          {status === "accountCreated" ? (
-            <HighlightedInformation>
-              We have created your account. Please click on the link in the
-              email we have sent to you before logging in.
-            </HighlightedInformation>
-          ) : (
-            <HighlightedInformation>
-              Registration is disabled until we go live.
-            </HighlightedInformation>
-          )}
         </Fragment>
       }
       actions={
@@ -228,4 +198,4 @@ function RegisterDialog(props: RegisterDialogProps) {
   );
 }
 
-export default withStyles(styles, { withTheme: true })(RegisterDialog);
+export default withRouter(withStyles(styles, { withTheme: true })(RegisterDialog));

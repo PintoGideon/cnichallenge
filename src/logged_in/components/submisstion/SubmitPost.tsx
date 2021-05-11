@@ -8,15 +8,20 @@ import {
   Button,
   IconButton,
   WithStyles,
+  WithTheme,
   withStyles,
+  FormHelperText,
 } from "@material-ui/core";
 import FileCopy from "@material-ui/icons/FileCopy";
-
+import CloseIcon from "@material-ui/icons/Close";
+import HighlightedInformation from "../../../shared/HighlightedInformation";
+import { ErrorPayload } from "./AddPost";
 const styles = (theme: Theme) =>
   createStyles({
     floatButtonWrapper: {
       position: "absolute",
       top: theme.spacing(1),
+      botton: theme.spacing(1),
       right: theme.spacing(1),
       zIndex: 1000,
     },
@@ -68,7 +73,7 @@ const styles = (theme: Theme) =>
     },
   });
 
-interface SubmitPostProps extends WithStyles<typeof styles> {
+interface SubmitPostProps extends WithStyles<typeof styles>, WithTheme {
   onUpload: (event: ChangeEvent<HTMLInputElement>) => void;
   formValues: {
     pluginName: string;
@@ -76,8 +81,9 @@ interface SubmitPostProps extends WithStyles<typeof styles> {
     githubRepository: string;
   };
   updateValue: (name: string, value: string) => void;
-  errorStatus: string;
+  errorStatus: ErrorPayload;
   fileName: string;
+  clearUpload:   ()   =>   void;
 }
 
 function SubmitPost(props: SubmitPostProps) {
@@ -88,6 +94,8 @@ function SubmitPost(props: SubmitPostProps) {
     updateValue,
     errorStatus,
     fileName,
+    theme,
+    clearUpload,
   } = props;
 
   return (
@@ -101,7 +109,7 @@ function SubmitPost(props: SubmitPostProps) {
           variant="outlined"
           value={formValues.pluginName}
           margin="normal"
-          error={errorStatus === "invalidPlugin"}
+          error={errorStatus.name.length > 0}
           required
           fullWidth
           label="Plugin Name"
@@ -111,10 +119,7 @@ function SubmitPost(props: SubmitPostProps) {
           onChange={(e) => {
             updateValue("pluginName", e.target.value);
           }}
-          helperText={
-            errorStatus === "invalidPlugin" &&
-            "This plugin is already present in the store."
-          }
+          helperText={errorStatus.name}
           FormHelperTextProps={{ error: true }}
         />
 
@@ -122,17 +127,16 @@ function SubmitPost(props: SubmitPostProps) {
           variant="outlined"
           value={formValues.dockerImage}
           margin="normal"
-          error={errorStatus === "dockerImage"}
+          error={errorStatus.dock_image.length > 0}
           required
           fullWidth
           label="Docker Image"
-          autoFocus
           autoComplete="off"
           type="email"
           onChange={(e) => {
             updateValue("dockerImage", e.target.value);
           }}
-          helperText={errorStatus === "dockerImage" && "This image is Valid"}
+          helperText={errorStatus.dock_image}
           FormHelperTextProps={{ error: true }}
         />
 
@@ -140,17 +144,16 @@ function SubmitPost(props: SubmitPostProps) {
           variant="outlined"
           margin="normal"
           value={formValues.githubRepository}
-          error={errorStatus === "githubRepository"}
+          error={errorStatus.public_repo.length > 0}
           required
           fullWidth
           label="Github Repository"
-          autoFocus
           autoComplete="off"
           type="email"
           onChange={(e) => {
             updateValue("githubRepository", e.target.value);
           }}
-          helperText={errorStatus === "githubRepository" && "This url is Valid"}
+          helperText={errorStatus.public_repo}
           FormHelperTextProps={{ error: true }}
         />
         <div>
@@ -173,12 +176,34 @@ function SubmitPost(props: SubmitPostProps) {
                 color="primary"
                 aria-label="upload picture"
                 component="span"
+                onClick={clearUpload}
               >
                 <FileCopy /> {fileName}
+                <IconButton
+                  color="primary"
+                  aria-label="cancel upload"
+                  component="span"
+                >
+                  <CloseIcon />
+                </IconButton>
               </IconButton>
             </label>
           )}
         </div>
+        {errorStatus.descriptor_file && (
+          <FormHelperText
+            error
+            style={{
+              display: "block",
+              marginTop: theme.spacing(3),
+            }}
+          >
+            {errorStatus.descriptor_file}
+          </FormHelperText>
+        )}
+        <HighlightedInformation>
+          Please upload a plugin representation from your local file system
+        </HighlightedInformation>
       </FormControl>
     </Fragment>
   );

@@ -1,10 +1,10 @@
-import React, { useState, Fragment, useCallback, useEffect } from "react";
+import React, { useState, Fragment, useCallback } from "react";
 import { withStyles, Theme, createStyles, WithStyles } from "@material-ui/core";
 import classNames from "classnames";
 import NavBar from "./navigation/NavBar";
 import ConsecutiveSnackbarMessages from "../../shared/ConsecutiveSnackbarMessages";
 import Routing from "./Routing";
-import { client, cniclient } from "../../utils/auth-provider";
+import { Auth } from "../../App";
 
 
 const styles = (theme: Theme) =>
@@ -22,10 +22,13 @@ const styles = (theme: Theme) =>
   });
 
 interface MainProps extends WithStyles<typeof styles> {
-  user: string;
+  user: Auth;
+  logout: () => void;
 }
 
 export interface PluginListProp {
+  profilePicUrl?: string;
+  author?: string;
   id?: number;
   name?: string;
   status?: string;
@@ -36,64 +39,12 @@ export interface PluginListProp {
 }
 
 function Main(props: MainProps) {
-  const { classes, user } = props;
-  const [selectedTab, setSelectedTab] = useState("");
+  const { classes, user, logout } = props;
+  const [selectedTab, setSelectedTab] = useState("Dashboard");
   const [pushMessageToSnackbar, setPushMessageToSnackbar] = useState<
     (message: string) => void
   >();
-  const [isPluginSubmitted, setIsPluginSubmitted] = React.useState(false);
-  const [pluginList, setPluginList] = React.useState<PluginListProp[]>([]);
-
-  const fetchRegisteredPlugins = useCallback(async () => {
-    const plugins = await client().then(async (fetchedClient) => {
-      const pluginList = await fetchedClient.getPlugins({
-        limit: 10,
-        offset: 0,
-      });
-      return pluginList;
-    });
-
-    const submittedPluginList = Promise.all(
-      plugins.data.map(async (plugin: any) => {
-        let target: PluginListProp = {};
-        if (plugin.id <= 3) {
-          return;
-        } else {
-          let files = [];
-          const response = await cniclient(`cni/${plugin.id}/`, "get", {
-            username: "janedoe",
-            password: "jane1234",
-          });
-
-          if (response.status === "finishedSuccessfully") {
-            const response = await cniclient(`cni/${plugin.id}/files`, "get", {
-              username: "janedoe",
-              password: "jane1234",
-            });
-            files = response.results.length > 0 ? response.results : [];
-          }
-          target = {
-            id: plugin.id,
-            name: plugin.name,
-            status: response.status,
-            files,
-          };
-          return target;
-        }
-      })
-    );
-
-    submittedPluginList.then((data: any) => {
-      let filteredList = (data as PluginListProp[]).filter((data) => {
-        if (data) return data;
-      });
-      setPluginList(filteredList);
-    });
-  }, []);
-
-  useEffect(() => {
-    fetchRegisteredPlugins();
-  }, [fetchRegisteredPlugins]);
+  
 
   const selectDashboard = useCallback(() => {
     document.title = "CNICHALLENGE - Dashboard";
@@ -109,16 +60,15 @@ function Main(props: MainProps) {
 
   return (
     <Fragment>
-      <NavBar selectedTab={selectedTab} user={user} />
+      <NavBar selectedTab={selectedTab} user={user} logout={logout} />
       <ConsecutiveSnackbarMessages
         getPushMessageFromChild={getPushMessageFromChild}
       />
       <main className={classNames(classes.main)}>
         <Routing
-          isPluginSubmitted={isPluginSubmitted}
+          user={user}
           pushMessageToSnackbar={pushMessageToSnackbar}
           selectDashboard={selectDashboard}
-          computedList={pluginList}
         />
       </main>
     </Fragment>

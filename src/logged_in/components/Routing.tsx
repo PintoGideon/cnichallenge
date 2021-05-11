@@ -8,8 +8,9 @@ import {
   WithTheme,
 } from "@material-ui/core";
 import Dashboard from "./dashboard/Dashboard";
-import {PluginListProp} from './Main'
+
 import PropsRoute from "../../shared/PropsRoute";
+import { Auth } from "../../App";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -48,10 +49,10 @@ const styles = (theme: Theme) =>
   });
 
 interface RoutingProps extends WithStyles<typeof styles>, WithTheme {
-  isPluginSubmitted: boolean;
+  user: Auth;
   selectDashboard: () => void;
   pushMessageToSnackbar?: (message: string) => void;
-  computedList:  PluginListProp[];
+  
 }
 
 function Routing(props: RoutingProps) {
@@ -59,19 +60,17 @@ function Routing(props: RoutingProps) {
     selectDashboard,
     classes,
     pushMessageToSnackbar,
-    isPluginSubmitted,
-    computedList
+    user,
   } = props;
   return (
     <div className={classes.wrapper}>
       <Switch>
         <PropsRoute
+          user={user}
           path="/dashboard"
-          isPluginSubmitted={isPluginSubmitted}
           component={Dashboard}
           selectDashboard={selectDashboard}
           pushMessageToSnackbar={pushMessageToSnackbar}
-          computedList={computedList}
         />
       </Switch>
     </div>

@@ -25,8 +25,9 @@ import {
 import classNames from "classnames";
 import DashboardIcon from "@material-ui/icons/Dashboard";
 import MenuIcon from "@material-ui/icons/Menu";
-
+import PowerSettingsNewIcon from "@material-ui/icons/PowerSettingsNew";
 import NavigationDrawer from "../../../shared/NavigationDrawer";
+import { Auth } from "../../../App";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -126,12 +127,13 @@ const styles = (theme: Theme) =>
 
 interface NavBarProps extends WithStyles<typeof styles>, WithWidth {
   selectedTab: string;
-  user: string;
+  user: Auth;
+  logout: () => void;
 }
 
 function NavBar(props: NavBarProps) {
   const links = useRef([]);
-  const { classes, selectedTab, width, user } = props;
+  const { classes, selectedTab, width, user, logout } = props;
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isSideDrawerOpen, setIsSideDrawerOpen] = useState(false);
   const openMobileDrawer = useCallback(() => {
@@ -149,6 +151,7 @@ function NavBar(props: NavBarProps) {
   const closeDrawer = useCallback(() => {
     setIsSideDrawerOpen(false);
   }, [setIsSideDrawerOpen]);
+
   const menuItems = [
     {
       link: "/dashboard",
@@ -164,6 +167,17 @@ function NavBar(props: NavBarProps) {
           />
         ),
         mobile: <DashboardIcon className="text-white" />,
+      },
+    },
+    {
+      link: "/",
+      name: "Logout",
+      onClick: logout,
+      icon: {
+        desktop: (
+          <PowerSettingsNewIcon className="text-white" fontSize="small" />
+        ),
+        mobile: <PowerSettingsNewIcon className="text-white" />,
       },
     },
   ];
@@ -213,11 +227,18 @@ function NavBar(props: NavBarProps) {
               disableGutters
               className={classNames(classes.iconListItem, classes.smBordered)}
             >
+              <Avatar
+                alt="profile picture"
+                src={`${process.env.PUBLIC_URL}/images/Avatar.png`}
+                className={classNames(classes.accountAvatar)}
+              />
               {isWidthUp("sm", width) && (
                 <ListItemText
                   className={classes.username}
                   primary={
-                    <Typography color="textPrimary">Hi {user}</Typography>
+                    <Typography color="textPrimary">
+                      Hi {user.username}
+                    </Typography>
                   }
                 />
               )}
